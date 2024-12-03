@@ -1,0 +1,51 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Cluster {
+  BusinessDevelopmentCluster
+  ClientOperationsCluster
+  EngineeringCluster
+  FinanceOperationsCluster
+  LeasingCluster
+  MarketDevelopmentCluster
+  MarketingCluster
+  OperationsExcellence
+  PeopleCluster
+  PoplarCompanies
+  PostLeasingCluster
+  PropertyOperationsCluster
+}
+
+enum PrizeStatus {
+  Available
+  Taken
+}
+
+model Participants {
+  id        String      @id @default(uuid())
+  name      String
+  email     String   @unique
+  cluster   Cluster
+  role      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  claimedPrizeAt DateTime?
+  prizeId   Int?    @unique
+  prize     Prize?  @relation(fields: [prizeId], references: [id])
+}
+
+model Prize {
+  id        Int      @id @default(autoincrement())
+  name      String
+  status    PrizeStatus @default(Available)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  participant Participants?
+}
