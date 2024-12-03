@@ -1,6 +1,6 @@
 import { Participants } from "@prisma/client"
 
-const BASE_URL = "http://poplar-year-end.vercel.app/api";
+const BASE_URL = "https://poplar-year-end.vercel.app/api";
 
 const registerParticipant = async (data: Partial<Participants>) => {
     const response = await fetch(`${BASE_URL}/participants`, {
