@@ -25,7 +25,7 @@ interface Participant {
 const MyPrizePage = () => {
   const [participant, setParticipant] = useState<Participant>()
   const [email, setEmail] = useState("")
-  const { data: participantPrize, refetch} = useGetParticipantPrize(email)
+  const { data: participantPrize, refetch, isLoading} = useGetParticipantPrize(email)
 
    const form = useForm<z.infer<typeof prizeSchema>>({
      resolver: zodResolver(prizeSchema),
@@ -71,7 +71,7 @@ const MyPrizePage = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">See Prize</Button>
+            <Button type="submit" disabled={isLoading}>See Prize</Button>
           </form>
         </Form>
       </Card>

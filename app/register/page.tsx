@@ -30,7 +30,7 @@ import { useRouter } from "next/navigation";
 const Registerpage = () => {
 
   const router = useRouter();
-  const { mutate: registerParticipant } = useRegisterParticipant({
+  const { mutate: registerParticipant, isPending } = useRegisterParticipant({
     onSuccess: () => {
       toast.success("Registered successfully");
       router.push("/my-prize");
@@ -124,7 +124,7 @@ const Registerpage = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isPending}>
               Submit
             </Button>
           </form>
