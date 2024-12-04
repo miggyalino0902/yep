@@ -19,6 +19,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { Cluster } from "@prisma/client";
@@ -26,6 +39,9 @@ import { Card } from "@/components/ui/card";
 import { useRegisterParticipant } from "@/lib/mutations/participantMutations";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { poplarHomesEmails } from "@/lib/constants/email";
 
 const Registerpage = () => {
 
@@ -49,11 +65,23 @@ const Registerpage = () => {
   };
 
   const clusters = Object.values(Cluster);
+
+  const formatClusterName = (name: string) => {
+    return name.replace(/([a-z])([A-Z])/g, "$1 $2");
+  };
+
   const clusterOptions = clusters.map((cluster) => (
     <SelectItem key={cluster} value={cluster}>
-      {cluster}
+      {formatClusterName(cluster)}
     </SelectItem>
   ));
+
+  const emailOptions = poplarHomesEmails.map((email) => {
+    return {
+      label: email,
+      value: email,
+    }
+  })
 
   return (
     <div className="flex justify-center items-center w-full h-[90vh]">
@@ -80,15 +108,63 @@ const Registerpage = () => {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value
+                            ? emailOptions.find(
+                                (email) => email.value === field.value
+                              )?.label
+                            : "Select Email"}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[200px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search language..." />
+                        <CommandList>
+                          <CommandEmpty>No email found.</CommandEmpty>
+                          <CommandGroup>
+                            {emailOptions.map((email) => (
+                              <CommandItem
+                                value={email.label}
+                                key={email.value}
+                                onSelect={() => {
+                                  form.setValue("email", email.value);
+                                }}
+                              >
+                                {email.label}
+                                <Check
+                                  className={cn(
+                                    "ml-auto",
+                                    email.value === field.value
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="cluster"
@@ -106,7 +182,6 @@ const Registerpage = () => {
                     </FormControl>
                     <SelectContent>{clusterOptions}</SelectContent>
                   </Select>
-
                   <FormMessage />
                 </FormItem>
               )}
