@@ -7,10 +7,7 @@ export const participantSchema = z.object({
   }),
   email: z
     .string({ required_error: "Email is Required" })
-    .email({ message: "Invalid email address" })
-    .refine((email) => email.endsWith("@poplarhomes.com"), {
-        message: "Email must be a valid Poplar email",
-    }),
+    .email({ message: "Invalid email address" }),
   cluster: z.nativeEnum(Cluster, { required_error: "Cluster is Required" }),
   role: z.string({required_error: "Role is Required"}), 
 });
